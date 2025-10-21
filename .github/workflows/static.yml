@@ -39,14 +39,20 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install beautifulsoup4
-      - name: Generate report
+      - name: Generate reports
         run: |
           cd src
+          python rawStandings.py
+          python ownersStandings.py
           python StandingsReport.py
+          python fbStandings.py
+          python fbOwnersStandings.py
+          python FootballReport.py
       - name: Prepare deployment
         run: |
           mkdir -p _site
           cp index.html _site/
+          cp fb_index.html _site/
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
