@@ -63,8 +63,9 @@ for record in merged_data:
             'Total_Ties': 0,
             'Seasons_Played': 0,
             'Rank_Total': 0,
-            'Best_Rank': float('inf'),
-            'Worst_Rank': 0
+            'Championships': 0,
+            'Finals': 0,
+            'Playoffs': 0
         }
     
     owner_totals[owner]['Total_Wins'] += int(record['Wins'])
@@ -75,8 +76,14 @@ for record in merged_data:
     # Track rank statistics
     rank = int(record['Rank'])
     owner_totals[owner]['Rank_Total'] += rank
-    owner_totals[owner]['Best_Rank'] = min(owner_totals[owner]['Best_Rank'], rank)
-    owner_totals[owner]['Worst_Rank'] = max(owner_totals[owner]['Worst_Rank'], rank)
+    
+    # Count achievements based on final rank
+    if rank == 1:
+        owner_totals[owner]['Championships'] += 1
+    if rank <= 2:
+        owner_totals[owner]['Finals'] += 1
+    if rank <= 4:
+        owner_totals[owner]['Playoffs'] += 1
 
 # Calculate additional stats
 for owner_data in owner_totals.values():
@@ -92,11 +99,6 @@ for owner_data in owner_totals.values():
         owner_data['Average_Rank'] = round(owner_data['Rank_Total'] / owner_data['Seasons_Played'], 1)
     else:
         owner_data['Average_Rank'] = 0.0
-    
-    # Handle case where no ranks recorded (shouldn't happen with current data)
-    if owner_data['Best_Rank'] == float('inf'):
-        owner_data['Best_Rank'] = 0
-        owner_data['Worst_Rank'] = 0
 
 # Sort by win percentage (descending)
 aggregated_data = sorted(owner_totals.values(), key=lambda x: x['Win_Percentage'], reverse=True)
@@ -104,7 +106,7 @@ aggregated_data = sorted(owner_totals.values(), key=lambda x: x['Win_Percentage'
 # Write aggregated data to CSV
 overall_filename = '../data/ownersStandingsOverall.csv'
 with open(overall_filename, 'w', newline='', encoding='utf-8') as f:
-    fieldnames = ['Owner', 'Seasons_Played', 'Total_Games', 'Total_Wins', 'Total_Losses', 'Total_Ties', 'Win_Percentage', 'Average_Rank', 'Best_Rank', 'Worst_Rank']
+    fieldnames = ['Owner', 'Seasons_Played', 'Total_Games', 'Total_Wins', 'Total_Losses', 'Total_Ties', 'Win_Percentage', 'Average_Rank', 'Championships', 'Finals', 'Playoffs']
     writer = csv.DictWriter(f, fieldnames=fieldnames)
     
     writer.writeheader()
