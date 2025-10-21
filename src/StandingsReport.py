@@ -249,7 +249,106 @@ def get_win_pct_class(win_pct):
     else:
         return 'poor'
 
-def generate_html_report(standings, stats, chart_data, boxplot_data):
+def calculate_playoff_probabilities(detailed_standings):
+    """Calculate playoff probability based on win percentage"""
+    # Create data points for win percentage vs playoff probability
+    win_pct_data = []
+    
+    for record in detailed_standings:
+        wins = record['Wins']
+        losses = record['Losses']
+        ties = record['Ties']
+        rank = record['Rank']
+        
+        # Calculate winning percentage
+        total_games = wins + losses + ties
+        if total_games > 0:
+            win_pct = wins / total_games
+        else:
+            win_pct = 0
+        
+        # Determine if made playoffs (rank <= 4 based on previous logic)
+        made_playoffs = rank <= 4
+        
+        win_pct_data.append({
+            'win_pct': win_pct,
+            'made_playoffs': made_playoffs
+        })
+    
+    # Calculate probability for different win percentage ranges
+    probability_data = []
+    
+    # Create win percentage buckets (every 2.5%)
+    for i in range(0, 41):  # 0% to 100% in 2.5% increments
+        min_pct = i * 0.025
+        max_pct = (i + 1) * 0.025
+        
+        # Find all records in this range
+        records_in_range = [r for r in win_pct_data if min_pct <= r['win_pct'] < max_pct]
+        
+        if len(records_in_range) > 0:
+            playoff_count = sum(1 for r in records_in_range if r['made_playoffs'])
+            probability = playoff_count / len(records_in_range)
+            
+            probability_data.append({
+                'win_pct': (min_pct + max_pct) / 2,  # Midpoint of range
+                'probability': probability,
+                'sample_size': len(records_in_range)
+            })
+    
+    return probability_data
+
+def calculate_cumulative_playoff_percentages(detailed_standings):
+    """Calculate cumulative playoff percentage for teams with win% >= threshold"""
+    # Get all individual records with win percentage and playoff status
+    records = []
+    
+    for record in detailed_standings:
+        wins = record['Wins']
+        losses = record['Losses']
+        ties = record['Ties']
+        rank = record['Rank']
+        
+        # Calculate winning percentage
+        total_games = wins + losses + ties
+        if total_games > 0:
+            win_pct = wins / total_games
+        else:
+            win_pct = 0
+        
+        # Determine if made playoffs (rank <= 4)
+        made_playoffs = rank <= 4
+        
+        records.append({
+            'win_pct': win_pct,
+            'made_playoffs': made_playoffs
+        })
+    
+    # Calculate cumulative percentages for different thresholds
+    cumulative_data = []
+    
+    # Create thresholds from 0% to 100% in 1% increments
+    for threshold in range(0, 101):
+        threshold_pct = threshold / 100.0
+        
+        # Find all teams with win% >= threshold
+        qualifying_teams = [r for r in records if r['win_pct'] >= threshold_pct]
+        
+        if len(qualifying_teams) > 0:
+            playoff_teams = sum(1 for r in qualifying_teams if r['made_playoffs'])
+            playoff_percentage = playoff_teams / len(qualifying_teams)
+        else:
+            playoff_percentage = 0
+        
+        cumulative_data.append({
+            'threshold': threshold_pct,
+            'playoff_percentage': playoff_percentage,
+            'total_teams': len(qualifying_teams)
+        })
+    
+    return cumulative_data
+
+def generate_html_report(standings, stats, chart_data, boxplot_data, playoff_probabilities, cumulative_playoff_data):
     """Generate the HTML report"""
     
     # Get current timestamp
@@ -599,6 +698,37 @@ def generate_html_report(standings, stats, chart_data, boxplot_data):
             <canvas id="boxplotChart"></canvas>
         </div>
         
+        <h2>🎯 Playoff Probability Calculator</h2>
+        <div style="background-color: white; padding: 30px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <p style="text-align: center; margin-bottom: 25px; color: #666; font-size: 14px;">
+                Based on historical data from {stats['total_seasons']} seasons, see your chances of making the playoffs
+            </p>
+            
+            <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 20px;">
+                <label for="winPctSlider" style="font-weight: bold; color: #333;">Win Percentage:</label>
+                <input type="range" id="winPctSlider" min="0" max="100" value="50" step="1" 
+                       style="flex: 1; max-width: 300px; height: 8px; border-radius: 5px; background: #ddd; outline: none;">
+                <span id="winPctDisplay" style="font-weight: bold; color: #2196F3; min-width: 60px;">50.0%</span>
+            </div>
+            
+            <div style="text-align: center;">
+                <div style="font-size: 48px; font-weight: bold; color: #4CAF50; margin: 10px 0;" id="playoffProbability">
+                    ---%
+                </div>
+                <div style="color: #666; font-size: 16px;" id="playoffMessage">
+                    Chance of making playoffs
+                </div>
+                <div style="color: #999; font-size: 12px; margin-top: 10px;" id="sampleSize">
+                    Based on historical data
+                </div>
+            </div>
+        </div>
+        
+        <h2>📈 Playoff Odds by Win Percentage</h2>
+        <div style="background-color: white; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); height: 400px;">
+            <canvas id="cumulativePlayoffChart"></canvas>
+        </div>
+        
         <h2>🎯 League Highlights</h2>
         <div class="highlights">
             <div class="highlight-card">
@@ -890,6 +1020,12 @@ def generate_html_report(standings, stats, chart_data, boxplot_data):
         // Boxplot data
         const boxplotData = {json.dumps(boxplot_data)};
         
+        // Playoff probability data
+        const playoffProbabilities = {json.dumps(playoff_probabilities)};
+        
+        // Cumulative playoff data
+        const cumulativePlayoffData = {json.dumps(cumulative_playoff_data)};
+        
         // Create boxplot chart
         const boxplotCtx = document.getElementById('boxplotChart').getContext('2d');
         
@@ -1059,6 +1195,278 @@ def generate_html_report(standings, stats, chart_data, boxplot_data):
                 }}
             }}
         }});
+        
+        // Playoff Probability Calculator
+        function interpolatePlayoffProbability(winPct) {{
+            // Convert to decimal
+            const targetPct = winPct / 100;
+            
+            // Find the closest data points
+            let lower = null;
+            let upper = null;
+            
+            for (let i = 0; i < playoffProbabilities.length; i++) {{
+                const data = playoffProbabilities[i];
+                if (data.win_pct <= targetPct) {{
+                    lower = data;
+                }} else if (data.win_pct > targetPct && upper === null) {{
+                    upper = data;
+                    break;
+                }}
+            }}
+            
+            // If we have exact match
+            if (lower && lower.win_pct === targetPct) {{
+                return {{
+                    probability: lower.probability,
+                    sample_size: lower.sample_size
+                }};
+            }}
+            
+            // If we only have lower bound
+            if (lower && !upper) {{
+                return {{
+                    probability: lower.probability,
+                    sample_size: lower.sample_size
+                }};
+            }}
+            
+            // If we only have upper bound
+            if (!lower && upper) {{
+                return {{
+                    probability: upper.probability,
+                    sample_size: upper.sample_size
+                }};
+            }}
+            
+            // Interpolate between bounds
+            if (lower && upper) {{
+                const ratio = (targetPct - lower.win_pct) / (upper.win_pct - lower.win_pct);
+                const interpolatedProb = lower.probability + ratio * (upper.probability - lower.probability);
+                return {{
+                    probability: interpolatedProb,
+                    sample_size: Math.round((lower.sample_size + upper.sample_size) / 2)
+                }};
+            }}
+            
+            // Default fallback
+            return {{
+                probability: 0,
+                sample_size: 0
+            }};
+        }}
+        
+        function updatePlayoffProbability() {{
+            const slider = document.getElementById('winPctSlider');
+            const winPct = parseFloat(slider.value);
+            
+            // Update display
+            document.getElementById('winPctDisplay').textContent = winPct.toFixed(1) + '%';
+            
+            // Calculate probability
+            const result = interpolatePlayoffProbability(winPct);
+            const probability = (result.probability * 100).toFixed(1);
+            
+            // Update probability display
+            document.getElementById('playoffProbability').textContent = probability + '%';
+            
+            // Update color based on probability
+            const probElement = document.getElementById('playoffProbability');
+            if (result.probability >= 0.75) {{
+                probElement.style.color = '#4CAF50'; // Green
+            }} else if (result.probability >= 0.50) {{
+                probElement.style.color = '#FF9800'; // Orange
+            }} else if (result.probability >= 0.25) {{
+                probElement.style.color = '#FF5722'; // Red-orange
+            }} else {{
+                probElement.style.color = '#F44336'; // Red
+            }}
+            
+            // Update sample size
+            if (result.sample_size > 0) {{
+                document.getElementById('sampleSize').textContent = 
+                    `Based on ${{result.sample_size}} historical season${{result.sample_size === 1 ? '' : 's'}}`;
+            }} else {{
+                document.getElementById('sampleSize').textContent = 'Insufficient historical data';
+            }}
+        }}
+        
+        // Initialize slider
+        document.getElementById('winPctSlider').addEventListener('input', updatePlayoffProbability);
+        updatePlayoffProbability(); // Initial calculation
+        
+        // Create cumulative playoff chart
+        const cumulativeCtx = document.getElementById('cumulativePlayoffChart').getContext('2d');
+        
+        // Prepare data for cumulative chart
+        const cumulativeChartData = {{
+            labels: cumulativePlayoffData.map(d => (d.threshold * 100).toFixed(0)),
+            datasets: [{{
+                label: 'Playoff Percentage',
+                data: cumulativePlayoffData.map(d => d.playoff_percentage * 100),
+                borderColor: '#2196F3',
+                backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 3,
+                pointRadius: 2,
+                pointHoverRadius: 5,
+                pointBackgroundColor: '#2196F3',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+            }}]
+        }};
+        
+        // Custom plugin to add annotations at key thresholds
+        const cumulativeAnnotationPlugin = {{
+            id: 'cumulativeAnnotations',
+            afterDraw: function(chart) {{
+                const ctx = chart.ctx;
+                const chartArea = chart.chartArea;
+                
+                // Annotation thresholds (40%, 50%, 60%)
+                const thresholds = [40, 50, 60];
+                
+                thresholds.forEach(threshold => {{
+                    // Find the corresponding data point
+                    const dataPoint = cumulativePlayoffData.find(d => Math.round(d.threshold * 100) === threshold);
+                    if (dataPoint) {{
+                        const x = chart.scales.x.getPixelForValue(threshold);
+                        const y = chart.scales.y.getPixelForValue(dataPoint.playoff_percentage * 100);
+                        
+                        // Draw annotation
+                        ctx.save();
+                        
+                        // Draw vertical line
+                        ctx.strokeStyle = 'rgba(255, 87, 34, 0.8)';
+                        ctx.lineWidth = 2;
+                        ctx.setLineDash([5, 5]);
+                        ctx.beginPath();
+                        ctx.moveTo(x, chartArea.top);
+                        ctx.lineTo(x, y);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                        
+                        // Draw horizontal line
+                        ctx.beginPath();
+                        ctx.moveTo(chartArea.left, y);
+                        ctx.lineTo(x, y);
+                        ctx.stroke();
+                        
+                        // Draw point
+                        ctx.fillStyle = '#FF5722';
+                        ctx.strokeStyle = '#fff';
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        ctx.arc(x, y, 6, 0, 2 * Math.PI);
+                        ctx.fill();
+                        ctx.stroke();
+                        
+                        // Add text annotation
+                        ctx.fillStyle = '#333';
+                        ctx.font = 'bold 12px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        const percentage = (dataPoint.playoff_percentage * 100).toFixed(1) + '%';
+                        ctx.fillText(percentage, x, y - 15);
+                        
+                        // Add threshold label
+                        ctx.fillStyle = '#666';
+                        ctx.font = '11px Arial';
+                        ctx.textBaseline = 'top';
+                        ctx.fillText(threshold + '%', x, chartArea.bottom + 5);
+                        
+                        ctx.restore();
+                    }}
+                }});
+            }}
+        }};
+        
+        const cumulativeChart = new Chart(cumulativeCtx, {{
+            type: 'line',
+            data: cumulativeChartData,
+            plugins: [cumulativeAnnotationPlugin],
+            options: {{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {{
+                    title: {{
+                        display: true,
+                        text: 'Playoff Percentage for Teams with Win% ≥ Threshold',
+                        font: {{
+                            size: 16,
+                            weight: 'bold'
+                        }}
+                    }},
+                    legend: {{
+                        display: false
+                    }},
+                    tooltip: {{
+                        callbacks: {{
+                            title: function(context) {{
+                                return `Win Percentage ≥ ${{context[0].label}}%`;
+                            }},
+                            label: function(context) {{
+                                const dataIndex = context.dataIndex;
+                                const totalTeams = cumulativePlayoffData[dataIndex].total_teams;
+                                return [
+                                    `Playoff Rate: ${{context.parsed.y.toFixed(1)}}%`,
+                                    `Sample Size: ${{totalTeams}} team${{totalTeams === 1 ? '' : 's'}}`
+                                ];
+                            }}
+                        }}
+                    }}
+                }},
+                scales: {{
+                    x: {{
+                        title: {{
+                            display: true,
+                            text: 'Minimum Win Percentage (%)',
+                            font: {{
+                                size: 14,
+                                weight: 'bold'
+                            }}
+                        }},
+                        grid: {{
+                            display: true,
+                            color: 'rgba(0,0,0,0.1)'
+                        }},
+                        ticks: {{
+                            maxTicksLimit: 11,
+                            callback: function(value, index) {{
+                                return value % 10 === 0 ? value + '%' : '';
+                            }}
+                        }}
+                    }},
+                    y: {{
+                        title: {{
+                            display: true,
+                            text: 'Playoff Percentage (%)',
+                            font: {{
+                                size: 14,
+                                weight: 'bold'
+                            }}
+                        }},
+                        min: 0,
+                        max: 100,
+                        grid: {{
+                            display: true,
+                            color: 'rgba(0,0,0,0.1)'
+                        }},
+                        ticks: {{
+                            callback: function(value) {{
+                                return value + '%';
+                            }}
+                        }}
+                    }}
+                }},
+                elements: {{
+                    point: {{
+                        hoverRadius: 6
+                    }}
+                }}
+            }}
+        }});
     </script>
 </body>
 </html>"""
@@ -1086,11 +1494,19 @@ def main():
         boxplot_data = prepare_boxplot_data(detailed_standings)
         print(f"Prepared boxplot data for {len(boxplot_data['labels'])} ranks")
         
+        # Calculate playoff probabilities
+        playoff_probabilities = calculate_playoff_probabilities(detailed_standings)
+        print(f"Calculated playoff probabilities for {len(playoff_probabilities)} win percentage ranges")
+        
+        # Calculate cumulative playoff percentages
+        cumulative_playoff_data = calculate_cumulative_playoff_percentages(detailed_standings)
+        print(f"Calculated cumulative playoff data for {len(cumulative_playoff_data)} thresholds")
+        
         # Calculate statistics
         stats = calculate_additional_stats(standings)
         
         # Generate HTML
-        html_content = generate_html_report(standings, stats, chart_data, boxplot_data)
+        html_content = generate_html_report(standings, stats, chart_data, boxplot_data, playoff_probabilities, cumulative_playoff_data)
         
         # Write to file
         output_path = Path(__file__).parent / '../index.html'
