@@ -1,14 +1,22 @@
 #!/usr/bin/env python3
 """
-Parse fantasy basketball league standings from HTML and create CSV
+Parse fantasy basketball league standings from HTML and create raw CSV
 """
 
 import re
 import csv
 from bs4 import BeautifulSoup
 
+def clean_team_name(name):
+    """Keep only alphanumeric characters and spaces in team names"""
+    # Use regex to keep only letters, numbers, and spaces
+    cleaned = re.sub(r'[^a-zA-Z0-9\s]', '', name)
+    # Replace multiple spaces with single space and strip
+    cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+    return cleaned
+
 # Read the HTML file
-with open('/Users/jwildfire/Desktop/gm_standings.html', 'r', encoding='utf-8') as f:
+with open('../raw/gm_standings.html', 'r', encoding='utf-8') as f:
     html_content = f.read()
 
 # Parse HTML
@@ -50,6 +58,9 @@ for section in year_sections:
             
         team_name = team_span.get('title').strip()
         
+        # Clean special characters from team name
+        team_name = clean_team_name(team_name)
+        
         # Extract record (wins-losses-ties format)
         record_cell = cells[2]
         record_text = record_cell.get_text().strip()
@@ -73,7 +84,7 @@ for section in year_sections:
 all_standings.sort(key=lambda x: (x['Year'], x['Team']))
 
 # Write to CSV
-csv_filename = '/Users/jwildfire/Desktop/fantasy_basketball_standings.csv'
+csv_filename = '../data/rawStandings.csv'
 with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
     fieldnames = ['Year', 'Team', 'Wins', 'Losses', 'Ties']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)

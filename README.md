@@ -1,71 +1,135 @@
-# Fantasy Basketball League Analysis - Grudgematch
+# Fantasy Basketball League Data Analysis
 
-This directory contains the complete analysis of fantasy basketball league standings data from 2017-2025.
+A comprehensive analysis of ESPN fantasy basketball league standings from 2017-2025.
 
-## Files
+## Project Structure
 
-### Data Files
-- `gm_standings.html` - Original HTML file containing league standings from ESPN
-- `fantasy_basketball_standings.csv` - Parsed standings data with one row per team per year
-- `team_career_stats.csv` - Career statistics summary for each team across all years
+```
+grudgematch/
+├── README.md
+├── league_analysis_report.html          # Interactive HTML report with sortable tables
+├── raw/
+│   └── gm_standings.html                # Original ESPN league standings HTML data
+├── data/
+│   ├── rawStandings.csv                 # Raw standings data from BeautifulSoup parser (96 records)
+│   ├── ownersStandings.csv              # Merged standings with owner information (96 records)
+│   ├── fantasy_basketball_standings.csv # Year-by-year team standings data (96 records)
+│   ├── team_career_stats.csv           # Career totals and win percentages for all teams (27 teams)
+│   ├── owner_career_stats.csv          # Career statistics aggregated by owner (16 owners)
+│   └── owners.csv                       # Simple team-to-owner mapping (27 teams)
+└── src/
+    ├── rawStandings.py                  # Alternative HTML parser (uses BeautifulSoup)
+    ├── parse_standings_simple.py       # Extract data from HTML (regex-based)
+    ├── ownersStandings.py               # Merge rawStandings with owners
+    ├── calculate_team_stats.py         # Calculate career statistics
+    ├── add_owners.py                   # Add owner information to CSV files
+    └── analyze_owners.py               # Generate owner-based statistics
+```
 
-### Scripts
-- `parse_standings.py` - Initial parsing script (requires BeautifulSoup)
-- `parse_standings_simple.py` - Working parser using only built-in Python libraries
-- `calculate_team_stats.py` - Script to generate career statistics for each team
+## Data Structure
 
-## Data Summary
+### rawStandings.csv
+- **Year**: Season year (2017-2025)
+- **Team**: Team name
+- **Wins**: Regular season wins
+- **Losses**: Regular season losses
+- **Ties**: Regular season ties
 
-### League Overview
-- **Years covered:** 2017-2025 (9 seasons)
-- **Total records:** 96 team-seasons
-- **Unique teams:** 27 different teams
-- **League size:** 10-12 teams per year
+### ownersStandings.csv
+- **Year**: Season year (2017-2025)
+- **Team**: Team name
+- **Owner**: Team owner name
+- **Wins**: Regular season wins
+- **Losses**: Regular season losses
+- **Ties**: Regular season ties
 
-### Top Performers
+### fantasy_basketball_standings.csv
+- **Year**: Season year (2017-2025) 
+- **Team**: Team name
+- **Owner**: Team owner name (added from 2025 season data)
+- **Wins**: Regular season wins
+- **Losses**: Regular season losses  
+- **Ties**: Regular season ties
 
-#### Most Total Wins
-1. The Penthouse Panda Bear - 107 wins in 9 seasons (.626 win%)
-2. Team Carter - 77 wins in 7 seasons (.575 win%)
-3. Baton Rouge Beasts - 76 wins in 9 seasons (.444 win%)
-4. Utah Bootleggers - 74 wins in 9 seasons (.433 win%)
-5. I'm Trying Jennifer - 71 wins in 7 seasons (.538 win%)
+### team_career_stats.csv
+- **Team**: Team name
+- **Owner**: Team owner name
+- **Seasons**: Number of seasons played
+- **Wins**: Total career wins
+- **Losses**: Total career losses
+- **Ties**: Total career ties
+- **Win_Percentage**: Career win percentage
 
-#### Best Win Percentages (minimum 3 seasons)
-1. Austin CurryBrons - .644 (38-21-0 in 3 seasons)
-2. The Penthouse Panda Bear - .626 (107-63-1 in 9 seasons)
-3. Austin Football Team - .607 (68-42-2 in 6 seasons)
-4. Team Carter - .575 (77-56-1 in 7 seasons)
-5. I'm Trying Jennifer - .538 (71-60-1 in 7 seasons)
+### owner_career_stats.csv
+- **Owner**: Owner name
+- **Teams**: Number of teams owned
+- **Team_Names**: List of team names owned
+- **Total_Seasons**: Total seasons across all teams
+- **Total_Wins**: Total wins across all teams
+- **Total_Losses**: Total losses across all teams
+- **Total_Ties**: Total ties across all teams
+- **Total_Games**: Total games played
+- **Win_Percentage**: Overall win percentage
+
+### owners.csv
+- **Team**: Team name
+- **Owner**: Owner name (simple mapping table)
 
 ## Usage
 
-To regenerate the analysis:
+### Option 1: Using the regex-based parser (recommended)
+```bash
+cd src
+python3 parse_standings_simple.py
+python3 calculate_team_stats.py
+python3 add_owners.py
+python3 analyze_owners.py
+```
 
-1. **Parse HTML standings:**
-   ```bash
-   python3 parse_standings_simple.py
-   ```
+### Option 2: Using the BeautifulSoup parser
+```bash
+cd src
+python3 rawStandings.py              # Creates rawStandings.csv
+python3 ownersStandings.py           # Merges rawStandings.csv + owners.csv → ownersStandings.csv
+python3 calculate_team_stats.py
+python3 add_owners.py
+python3 analyze_owners.py
+```
 
-2. **Calculate career statistics:**
-   ```bash
-   python3 calculate_team_stats.py
-   ```
+### Option 3: Simple merge workflow
+```bash
+cd src
+python3 rawStandings.py              # Parse HTML → rawStandings.csv
+python3 add_owners.py                # Create owners.csv mapping
+python3 ownersStandings.py           # Merge → ownersStandings.csv (ready for analysis)
+```
 
-## Data Format
+Or run the complete analysis pipeline:
+```bash
+cd src
+python3 parse_standings_simple.py && python3 calculate_team_stats.py && python3 add_owners.py && python3 analyze_owners.py
+```
 
-### fantasy_basketball_standings.csv
-- `Year` - Season year
-- `Team` - Team name
-- `Wins` - Regular season wins
-- `Losses` - Regular season losses
-- `Ties` - Regular season ties
+**Note**: The scripts will:
+- Read raw data from `../raw/gm_standings.html`
+- Output processed CSV files to `../data/`
+- Create the interactive HTML report in the root directory
 
-### team_career_stats.csv
-- `Team` - Team name
-- `Seasons` - Number of seasons played
-- `Wins` - Total career wins
-- `Losses` - Total career losses
-- `Ties` - Total career ties
-- `Total_Games` - Total games played
-- `Win_Percentage` - Career win percentage
+## League Statistics
+
+- **Total Teams**: 27 unique teams across 9 seasons
+- **Total Records**: 96 team-season records
+- **Season Format**: ~19-20 games per team per season
+- **Known Owners**: 10 owners identified for 16 teams (11 teams marked "Unknown")
+
+## Top Performers
+
+### By Total Wins
+1. Jeremy Wildfire: 107 wins (The Penthouse Panda Bear)
+2. Ryan Mindell: 106 wins (Austin Football Team, Austin CurryBrons)
+3. Tony Chen: 76 wins (Baton Rouge Beasts)
+
+### By Win Percentage (minimum 50 games)
+1. Jeremy Wildfire: 62.6% (107-63-1)
+2. Ben Wildfire: 62.2% (23-14-0) 
+3. Ryan Mindell: 62.0% (106-63-2)
