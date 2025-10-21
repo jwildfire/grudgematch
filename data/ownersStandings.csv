@@ -1,97 +1,97 @@
-Year,Team,Owner,Wins,Losses,Ties
-2017,Austin CurryBrons,Ryan,10,9,0
-2017,Baton Rouge Beasts,Tony,7,12,0
-2017,Joe Biden Would Cross You Over,John,15,4,0
-2017,Lilongwe 327,Ben,15,4,0
-2017,Mwambo Rd TIBA,Davide,6,13,0
-2017,Team Carter,Matt,9,10,0
-2017,Team Nye,Samuel,9,10,0
-2017,The Penthouse Panda Bear,Jeremy,9,10,0
-2017,UTEP 2 Steps,Jon,8,11,0
-2017,Utah Bootleggers,Trafton,7,12,0
-2018,Austin CurryBrons,Ryan,16,4,0
-2018,Baton Rouge Beasts,Tony,6,14,0
-2018,Joe Biden Would Cross You Over,John,7,13,0
-2018,Lilongwe 327,Ben,14,6,0
-2018,Mwambo Rd TIBA,Davide,5,15,0
-2018,Team Carter,Matt,18,2,0
-2018,Team Davidai,Nadav,8,12,0
-2018,Team Reddy,Susheel,11,9,0
-2018,Teh Mehs,Jonathan,12,8,0
-2018,The Penthouse Panda Bear,Jeremy,11,9,0
-2018,UTEP 2 Steps,Jon,10,10,0
-2018,Utah Bootleggers,Trafton,2,18,0
-2019,Ari 471,Ben,7,13,0
-2019,Austin CurryBrons,Ryan,12,8,0
-2019,Baton Rouge Beasts,Tony,6,14,0
-2019,Beto Would Cross You Over,John,11,9,0
-2019,Bull City Bangers,Nick,10,10,0
-2019,Im Trying Jennifer,Susheel,16,4,0
-2019,Mwambo Rd TIBA,Davide,11,9,0
-2019,Team Carter,Matt,12,8,0
-2019,Teh Mehs,Jonathan,6,14,0
-2019,The Penthouse Panda Bear,Jeremy,14,6,0
-2019,UTEP 2 Steps,Jon,1,19,0
-2019,Utah Bootleggers,Trafton,14,6,0
-2020,Ari 471,Ben,13,6,1
-2020,Austin Football Team,Ryan,5,14,1
-2020,Baton Rouge Beasts,Tony,9,10,1
-2020,Bull City Bangers,Nick,9,10,1
-2020,Im Trying Jennifer,Susheel,8,11,1
-2020,JMapps Stepover,John,18,1,1
-2020,Kawhis Laugh,Chris,6,13,1
-2020,Mwambo Rd TIBA,Davide,9,10,1
-2020,Team Carter,Matt,13,6,1
-2020,The Penthouse Panda Bear,Jeremy,14,5,1
-2020,Uncanny Logo,Alex,7,12,1
-2020,Utah Bootleggers,Trafton,3,16,1
-2021,Ari 471,Ben,11,5,0
-2021,Austin Football Team,Ryan,10,6,0
-2021,Baton Rouge Beasts,Tony,5,11,0
-2021,Im Trying Jennifer,Susheel,9,7,0
-2021,Kawhis Laugh,Chris,3,13,0
-2021,Mapp Stepback,John,10,6,0
-2021,Nowitzkis Fadeaway,Alex,3,13,0
-2021,Team Carter,Matt,9,7,0
-2021,The Penthouse Panda Bear,Jeremy,9,7,0
-2021,Utah Bootleggers,Trafton,11,5,0
-2022,Ari 471,Ben,10,9,0
-2022,Austin Football Team,Ryan,11,8,0
-2022,Baton Rouge Beasts,Tony,11,8,0
-2022,Im Trying Jennifer,Susheel,10,9,0
-2022,Kawhis Laugh,Chris,6,13,0
-2022,Mapp Stepback,John,5,14,0
-2022,Nowitzkis Fadeaway,Alex,7,12,0
-2022,Team Carter,Matt,11,8,0
-2022,The Penthouse Panda Bear,Jeremy,14,5,0
-2022,Utah Bootleggers,Trafton,10,9,0
-2023,Ari 471,Ben,6,14,0
-2023,Austin Football Team,Ryan,12,7,1
-2023,Baton Rouge Beasts,Tony,15,5,0
-2023,Bull City Bums,Nick,3,16,1
-2023,Im Trying Jennifer,Susheel,14,6,0
-2023,Miami Mambas,John,9,11,0
-2023,Nowitzkis Fadeaway,Alex,16,4,0
-2023,Team Carter,Matt,5,15,0
-2023,The Penthouse Panda Bear,Jeremy,12,8,0
-2023,Utah Bootleggers,Trafton,7,13,0
-2024,Austin Football Team,Ryan,14,4,0
-2024,Baton Rouge Beasts,Tony,10,8,0
-2024,Bull City Bums,Nick,11,7,0
-2024,Fly Nye Guy,Samuel,8,10,0
-2024,Im Trying Jennifer,Susheel,6,12,0
-2024,Miami Mambas,John,4,14,0
-2024,Nowitzkis Fadeaway,Alex,7,11,0
-2024,The Penthouse Panda Bear,Jeremy,10,8,0
-2024,Toso Viti Toso,Ben,11,7,0
-2024,Utah Bootleggers,Trafton,9,9,0
-2025,Austin Football Team,Ryan,16,3,0
-2025,Baton Rouge Beasts,Tony,7,12,0
-2025,Bull City Bums,Nick,4,15,0
-2025,Fly Nye Guy,Samuel,11,8,0
-2025,Im Trying Jennifer,Susheel,8,11,0
-2025,Miami Mambas,John,2,17,0
-2025,Nowitzkis Fadeaway,Alex,10,9,0
-2025,The Penthouse Panda Bear,Jeremy,14,5,0
-2025,Toso Viti Toso,Ben,12,7,0
-2025,Utah Bootleggers,Trafton,11,8,0
+Year,Team,Owner,Rank,Wins,Losses,Ties
+2017,Austin CurryBrons,Ryan,3,10,9,0
+2017,Baton Rouge Beasts,Tony,10,7,12,0
+2017,Joe Biden Would Cross You Over,John,2,15,4,0
+2017,Lilongwe 327,Ben,1,15,4,0
+2017,Mwambo Rd TIBA,Davide,8,6,13,0
+2017,Team Carter,Matt,6,9,10,0
+2017,Team Nye,Samuel,7,9,10,0
+2017,The Penthouse Panda Bear,Jeremy,4,9,10,0
+2017,UTEP 2 Steps,Jon,5,8,11,0
+2017,Utah Bootleggers,Trafton,9,7,12,0
+2018,Austin CurryBrons,Ryan,1,16,4,0
+2018,Baton Rouge Beasts,Tony,8,6,14,0
+2018,Joe Biden Would Cross You Over,John,12,7,13,0
+2018,Lilongwe 327,Ben,3,14,6,0
+2018,Mwambo Rd TIBA,Davide,11,5,15,0
+2018,Team Carter,Matt,2,18,2,0
+2018,Team Davidai,Nadav,10,8,12,0
+2018,Team Reddy,Susheel,5,11,9,0
+2018,Teh Mehs,Jonathan,4,12,8,0
+2018,The Penthouse Panda Bear,Jeremy,7,11,9,0
+2018,UTEP 2 Steps,Jon,6,10,10,0
+2018,Utah Bootleggers,Trafton,9,2,18,0
+2019,Ari 471,Ben,7,7,13,0
+2019,Austin CurryBrons,Ryan,8,12,8,0
+2019,Baton Rouge Beasts,Tony,11,6,14,0
+2019,Beto Would Cross You Over,John,6,11,9,0
+2019,Bull City Bangers,Nick,10,10,10,0
+2019,Im Trying Jennifer,Susheel,2,16,4,0
+2019,Mwambo Rd TIBA,Davide,5,11,9,0
+2019,Team Carter,Matt,4,12,8,0
+2019,Teh Mehs,Jonathan,9,6,14,0
+2019,The Penthouse Panda Bear,Jeremy,3,14,6,0
+2019,UTEP 2 Steps,Jon,12,1,19,0
+2019,Utah Bootleggers,Trafton,1,14,6,0
+2020,Ari 471,Ben,3,13,6,1
+2020,Austin Football Team,Ryan,10,5,14,1
+2020,Baton Rouge Beasts,Tony,5,9,10,1
+2020,Bull City Bangers,Nick,7,9,10,1
+2020,Im Trying Jennifer,Susheel,9,8,11,1
+2020,JMapps Stepover,John,1,18,1,1
+2020,Kawhis Laugh,Chris,11,6,13,1
+2020,Mwambo Rd TIBA,Davide,6,9,10,1
+2020,Team Carter,Matt,4,13,6,1
+2020,The Penthouse Panda Bear,Jeremy,2,14,5,1
+2020,Uncanny Logo,Alex,8,7,12,1
+2020,Utah Bootleggers,Trafton,12,3,16,1
+2021,Ari 471,Ben,3,11,5,0
+2021,Austin Football Team,Ryan,1,10,6,0
+2021,Baton Rouge Beasts,Tony,5,5,11,0
+2021,Im Trying Jennifer,Susheel,7,9,7,0
+2021,Kawhis Laugh,Chris,10,3,13,0
+2021,Mapp Stepback,John,2,10,6,0
+2021,Nowitzkis Fadeaway,Alex,8,3,13,0
+2021,Team Carter,Matt,9,9,7,0
+2021,The Penthouse Panda Bear,Jeremy,6,9,7,0
+2021,Utah Bootleggers,Trafton,4,11,5,0
+2022,Ari 471,Ben,6,10,9,0
+2022,Austin Football Team,Ryan,2,11,8,0
+2022,Baton Rouge Beasts,Tony,3,11,8,0
+2022,Im Trying Jennifer,Susheel,5,10,9,0
+2022,Kawhis Laugh,Chris,10,6,13,0
+2022,Mapp Stepback,John,8,5,14,0
+2022,Nowitzkis Fadeaway,Alex,9,7,12,0
+2022,Team Carter,Matt,4,11,8,0
+2022,The Penthouse Panda Bear,Jeremy,1,14,5,0
+2022,Utah Bootleggers,Trafton,7,10,9,0
+2023,Ari 471,Ben,6,6,14,0
+2023,Austin Football Team,Ryan,2,12,7,1
+2023,Baton Rouge Beasts,Tony,1,15,5,0
+2023,Bull City Bums,Nick,8,3,16,1
+2023,Im Trying Jennifer,Susheel,4,14,6,0
+2023,Miami Mambas,John,5,9,11,0
+2023,Nowitzkis Fadeaway,Alex,3,16,4,0
+2023,Team Carter,Matt,9,5,15,0
+2023,The Penthouse Panda Bear,Jeremy,7,12,8,0
+2023,Utah Bootleggers,Trafton,10,7,13,0
+2024,Austin Football Team,Ryan,2,14,4,0
+2024,Baton Rouge Beasts,Tony,3,10,8,0
+2024,Bull City Bums,Nick,4,11,7,0
+2024,Fly Nye Guy,Samuel,6,8,10,0
+2024,Im Trying Jennifer,Susheel,7,6,12,0
+2024,Miami Mambas,John,10,4,14,0
+2024,Nowitzkis Fadeaway,Alex,9,7,11,0
+2024,The Penthouse Panda Bear,Jeremy,8,10,8,0
+2024,Toso Viti Toso,Ben,1,11,7,0
+2024,Utah Bootleggers,Trafton,5,9,9,0
+2025,Austin Football Team,Ryan,3,16,3,0
+2025,Baton Rouge Beasts,Tony,10,7,12,0
+2025,Bull City Bums,Nick,9,4,15,0
+2025,Fly Nye Guy,Samuel,6,11,8,0
+2025,Im Trying Jennifer,Susheel,5,8,11,0
+2025,Miami Mambas,John,7,2,17,0
+2025,Nowitzkis Fadeaway,Alex,8,10,9,0
+2025,The Penthouse Panda Bear,Jeremy,2,14,5,0
+2025,Toso Viti Toso,Ben,4,12,7,0
+2025,Utah Bootleggers,Trafton,1,11,8,0

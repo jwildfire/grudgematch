@@ -29,6 +29,7 @@ with open('../data/rawStandings.csv', 'r', encoding='utf-8') as f:
             'Year': row['Year'],
             'Team': team,
             'Owner': owner,
+            'Rank': row['Rank'],
             'Wins': row['Wins'],
             'Losses': row['Losses'],
             'Ties': row['Ties']
@@ -40,7 +41,7 @@ print(f"Merged {len(merged_data)} records")
 # Write merged data to CSV
 output_filename = '../data/ownersStandings.csv'
 with open(output_filename, 'w', newline='', encoding='utf-8') as f:
-    fieldnames = ['Year', 'Team', 'Owner', 'Wins', 'Losses', 'Ties']
+    fieldnames = ['Year', 'Team', 'Owner', 'Rank', 'Wins', 'Losses', 'Ties']
     writer = csv.DictWriter(f, fieldnames=fieldnames)
     
     writer.writeheader()
@@ -60,13 +61,22 @@ for record in merged_data:
             'Total_Wins': 0,
             'Total_Losses': 0,
             'Total_Ties': 0,
-            'Seasons_Played': 0
+            'Seasons_Played': 0,
+            'Rank_Total': 0,
+            'Best_Rank': float('inf'),
+            'Worst_Rank': 0
         }
     
     owner_totals[owner]['Total_Wins'] += int(record['Wins'])
     owner_totals[owner]['Total_Losses'] += int(record['Losses'])
     owner_totals[owner]['Total_Ties'] += int(record['Ties'])
     owner_totals[owner]['Seasons_Played'] += 1
+    
+    # Track rank statistics
+    rank = int(record['Rank'])
+    owner_totals[owner]['Rank_Total'] += rank
+    owner_totals[owner]['Best_Rank'] = min(owner_totals[owner]['Best_Rank'], rank)
+    owner_totals[owner]['Worst_Rank'] = max(owner_totals[owner]['Worst_Rank'], rank)
 
 # Calculate additional stats
 for owner_data in owner_totals.values():
@@ -76,6 +86,17 @@ for owner_data in owner_totals.values():
         owner_data['Win_Percentage'] = round(owner_data['Total_Wins'] / total_games, 3)
     else:
         owner_data['Win_Percentage'] = 0.0
+    
+    # Calculate rank statistics
+    if owner_data['Seasons_Played'] > 0:
+        owner_data['Average_Rank'] = round(owner_data['Rank_Total'] / owner_data['Seasons_Played'], 1)
+    else:
+        owner_data['Average_Rank'] = 0.0
+    
+    # Handle case where no ranks recorded (shouldn't happen with current data)
+    if owner_data['Best_Rank'] == float('inf'):
+        owner_data['Best_Rank'] = 0
+        owner_data['Worst_Rank'] = 0
 
 # Sort by win percentage (descending)
 aggregated_data = sorted(owner_totals.values(), key=lambda x: x['Win_Percentage'], reverse=True)
@@ -83,12 +104,14 @@ aggregated_data = sorted(owner_totals.values(), key=lambda x: x['Win_Percentage'
 # Write aggregated data to CSV
 overall_filename = '../data/ownersStandingsOverall.csv'
 with open(overall_filename, 'w', newline='', encoding='utf-8') as f:
-    fieldnames = ['Owner', 'Seasons_Played', 'Total_Games', 'Total_Wins', 'Total_Losses', 'Total_Ties', 'Win_Percentage']
+    fieldnames = ['Owner', 'Seasons_Played', 'Total_Games', 'Total_Wins', 'Total_Losses', 'Total_Ties', 'Win_Percentage', 'Average_Rank', 'Best_Rank', 'Worst_Rank']
     writer = csv.DictWriter(f, fieldnames=fieldnames)
     
     writer.writeheader()
     for record in aggregated_data:
-        writer.writerow(record)
+        # Remove internal tracking fields before writing
+        output_record = {k: v for k, v in record.items() if k in fieldnames}
+        writer.writerow(output_record)
 
 print(f"Overall standings saved to: {overall_filename}")
 
@@ -115,7 +138,7 @@ for owner, count in sorted(owner_counts.items(), key=lambda x: x[1], reverse=Tru
 
 print(f"\nSample merged data:")
 for i, record in enumerate(merged_data[:5]):
-    print(f"  {record['Year']}: {record['Team']} ({record['Owner']}) - {record['Wins']}-{record['Losses']}-{record['Ties']}")
+    print(f"  {record['Year']}: #{record['Rank']} {record['Team']} ({record['Owner']}) - {record['Wins']}-{record['Losses']}-{record['Ties']}")
 
 print(f"\nOverall standings (by win percentage):")
 for i, record in enumerate(aggregated_data[:10]):  # Show top 10

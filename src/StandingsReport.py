@@ -26,6 +26,9 @@ def read_overall_standings():
             row['Total_Losses'] = int(row['Total_Losses'])
             row['Total_Ties'] = int(row['Total_Ties'])
             row['Win_Percentage'] = float(row['Win_Percentage'])
+            row['Average_Rank'] = float(row['Average_Rank'])
+            row['Best_Rank'] = int(row['Best_Rank'])
+            row['Worst_Rank'] = int(row['Worst_Rank'])
             standings.append(row)
     
     return standings
@@ -40,6 +43,7 @@ def read_detailed_standings():
         for row in reader:
             # Convert numeric fields
             row['Year'] = int(row['Year'])
+            row['Rank'] = int(row['Rank'])
             row['Wins'] = int(row['Wins'])
             row['Losses'] = int(row['Losses'])
             row['Ties'] = int(row['Ties'])
@@ -433,15 +437,16 @@ def generate_html_report(standings, stats, chart_data):
                     <th>Seasons</th>
                     <th>Record</th>
                     <th>Win %</th>
+                    <th>Avg Rank</th>
+                    <th>Best Rank</th>
+                    <th>Worst Rank</th>
                     <th>Total Games</th>
-                    <th>Avg Games/Season</th>
                 </tr>
             </thead>
             <tbody>"""
     
     for i, owner in enumerate(standings, 1):
         win_pct_class = get_win_pct_class(owner['Win_Percentage'])
-        avg_games_per_season = owner['Total_Games'] / owner['Seasons_Played']
         
         html_content += f"""
                 <tr>
@@ -450,8 +455,10 @@ def generate_html_report(standings, stats, chart_data):
                     <td>{owner['Seasons_Played']}</td>
                     <td class="record">{owner['Total_Wins']}-{owner['Total_Losses']}-{owner['Total_Ties']}</td>
                     <td><span class="win-pct {win_pct_class}">{owner['Win_Percentage']:.3f}</span></td>
+                    <td>{owner['Average_Rank']:.1f}</td>
+                    <td>{owner['Best_Rank']}</td>
+                    <td>{owner['Worst_Rank']}</td>
                     <td>{owner['Total_Games']}</td>
-                    <td>{avg_games_per_season:.1f}</td>
                 </tr>"""
     
     html_content += f"""

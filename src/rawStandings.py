@@ -50,6 +50,14 @@ for section in year_sections:
         if len(cells) < 3:
             continue
             
+        # Extract rank from first cell
+        rank_cell = cells[0]
+        rank_text = rank_cell.get_text().strip()
+        try:
+            rank = int(rank_text)
+        except (ValueError, TypeError):
+            continue  # Skip if rank is not a valid number
+            
         # Extract team name
         team_cell = cells[1]
         team_span = team_cell.find('span', {'title': True})
@@ -75,6 +83,7 @@ for section in year_sections:
             all_standings.append({
                 'Year': year,
                 'Team': team_name,
+                'Rank': rank,
                 'Wins': wins,
                 'Losses': losses,
                 'Ties': ties
@@ -86,7 +95,7 @@ all_standings.sort(key=lambda x: (x['Year'], x['Team']))
 # Write to CSV
 csv_filename = '../data/rawStandings.csv'
 with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
-    fieldnames = ['Year', 'Team', 'Wins', 'Losses', 'Ties']
+    fieldnames = ['Year', 'Team', 'Rank', 'Wins', 'Losses', 'Ties']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     
     writer.writeheader()
@@ -101,4 +110,4 @@ print(f"CSV file saved as: {csv_filename}")
 # Display a sample of the data
 print("\nSample data:")
 for i, row in enumerate(all_standings[:10]):
-    print(f"{row['Year']}: {row['Team']} - {row['Wins']}-{row['Losses']}-{row['Ties']}")
+    print(f"{row['Year']}: #{row['Rank']} {row['Team']} - {row['Wins']}-{row['Losses']}-{row['Ties']}")
