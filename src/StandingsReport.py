@@ -478,6 +478,11 @@ def generate_html_report(standings, stats, chart_data, boxplot_data):
     <div class="container">
         <h1>🏀 Fantasy Basketball League<br>Overall Standings Report</h1>
         <div class="timestamp">Generated on {timestamp}</div>
+        <div style="text-align: center; margin: 10px 0;">
+            <a href="https://github.com/jwildfire/grudgematch" target="_blank" style="color: #2196F3; text-decoration: none; font-size: 14px;">
+                📱 View Source Code on GitHub
+            </a>
+        </div>
         
         <h2>📊 League Summary</h2>
         <div class="summary-stats">
