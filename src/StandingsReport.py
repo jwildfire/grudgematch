@@ -92,8 +92,11 @@ def prepare_chart_data(detailed_standings):
     for owner, year_data in owners_data.items():
         # Create data points for this owner
         data_points = []
-        point_styles = []
+        point_colors = []
+        point_border_colors = []
         seasons_played = 0
+        
+        base_color = colors[color_index % len(colors)]
         
         for year in sorted_years:
             season_data = year_data.get(year, None)  # None if owner didn't play that year
@@ -102,11 +105,16 @@ def prepare_chart_data(detailed_standings):
                 wins = season_data['wins']
                 rank = season_data['rank']
                 data_points.append(wins)
-                # Use 'circle' for playoff seasons (rank <= 4), 'cross' for non-playoff
-                point_styles.append('circle' if rank <= 4 else 'cross')
+                # Filled circles for playoffs (rank <= 4), white circles for non-playoffs
+                if rank <= 4:
+                    point_colors.append(base_color)  # Filled with line color
+                else:
+                    point_colors.append('#ffffff')  # White/hollow
+                point_border_colors.append(base_color)  # Border always matches line color
             else:
                 data_points.append(None)
-                point_styles.append('circle')  # Default for missing data
+                point_colors.append(base_color)
+                point_border_colors.append(base_color)
         
         # Only show by default if owner has 5+ seasons
         is_visible = seasons_played >= 5
@@ -114,14 +122,16 @@ def prepare_chart_data(detailed_standings):
         chart_data['datasets'].append({
             'label': owner,
             'data': data_points,
-            'borderColor': colors[color_index % len(colors)],
-            'backgroundColor': colors[color_index % len(colors)] + '20',  # 20% opacity
+            'borderColor': base_color,
+            'backgroundColor': base_color + '20',  # 20% opacity for line area
             'tension': 0.1,
             'spanGaps': True,  # Connect points even if there are null values
             'hidden': not is_visible,  # Hide owners with < 5 seasons by default
-            'pointStyle': point_styles,
+            'pointBackgroundColor': point_colors,
+            'pointBorderColor': point_border_colors,
             'pointRadius': 6,
-            'pointHoverRadius': 8
+            'pointHoverRadius': 8,
+            'pointBorderWidth': 2
         })
         
         color_index += 1
@@ -484,7 +494,7 @@ def generate_html_report(standings, stats, chart_data):
         <p style="margin-bottom: 20px; color: #7f8c8d;">
             Interactive chart showing win trends over time. Only owners with 5+ seasons shown by default. 
             Use the dropdown to highlight a specific owner, or click legend items to show/hide additional owners.
-            <br><strong>Chart symbols:</strong> ● = Playoff season (rank ≤ 4), ✕ = Non-playoff season (rank > 4)
+            <br><strong>Chart symbols:</strong> ● = Playoff season (rank ≤ 4), ○ = Non-playoff season (rank > 4)
         </p>
         <div style="margin-bottom: 15px;">
             <label for="teamHighlight" style="margin-right: 10px; font-weight: bold; color: #2c3e50;">Highlight Team:</label>
