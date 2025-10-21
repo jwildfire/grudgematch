@@ -138,6 +138,80 @@ def prepare_chart_data(detailed_standings):
     
     return chart_data
 
+def prepare_boxplot_data(detailed_standings):
+    """Prepare data for the winning percentage by rank boxplot with beeswarm overlay"""
+    # Group data by rank
+    rank_data = {}
+    beeswarm_points = []
+    
+    for record in detailed_standings:
+        rank = record['Rank']
+        wins = record['Wins']
+        losses = record['Losses']
+        ties = record['Ties']
+        
+        # Calculate winning percentage
+        total_games = wins + losses + ties
+        if total_games > 0:
+            win_pct = wins / total_games
+        else:
+            win_pct = 0
+        
+        if rank not in rank_data:
+            rank_data[rank] = []
+        rank_data[rank].append(win_pct)
+        
+        # Store individual point data for beeswarm
+        beeswarm_points.append({
+            'rank': rank,
+            'win_pct': win_pct,
+            'team': record['Team'],
+            'owner': record['Owner'],
+            'year': record['Year'],
+            'wins': wins,
+            'losses': losses,
+            'ties': ties,
+            'record': f"{wins}-{losses}-{ties}" if ties > 0 else f"{wins}-{losses}"
+        })
+    
+    # Convert to boxplot format
+    boxplot_data = []
+    labels = []
+    
+    # Sort ranks and prepare data
+    for rank in sorted(rank_data.keys()):
+        values = sorted(rank_data[rank])
+        if len(values) > 0:
+            # Calculate mean winning percentage
+            mean_win_pct = sum(values) / len(values)
+            
+            boxplot_data.append({
+                'mean': mean_win_pct,
+                'count': len(values)
+            })
+            labels.append(f"Rank {rank}")
+    
+    # Generate beeswarm coordinates in vertical lines
+    beeswarm_with_coords = []
+    for point in beeswarm_points:
+        rank_index = sorted(rank_data.keys()).index(point['rank'])
+        
+        beeswarm_with_coords.append({
+            'x': rank_index,
+            'y': point['win_pct'],
+            'team': point['team'],
+            'owner': point['owner'],
+            'year': point['year'],
+            'record': point['record'],
+            'rank': point['rank']
+        })
+    
+    return {
+        'labels': labels,
+        'data': boxplot_data,
+        'beeswarm': beeswarm_with_coords
+    }
+
 def calculate_additional_stats(standings):
     """Calculate additional statistics for the report"""
     total_seasons = sum(owner['Seasons_Played'] for owner in standings)
@@ -175,7 +249,7 @@ def get_win_pct_class(win_pct):
     else:
         return 'poor'
 
-def generate_html_report(standings, stats, chart_data):
+def generate_html_report(standings, stats, chart_data, boxplot_data):
     """Generate the HTML report"""
     
     # Get current timestamp
@@ -515,6 +589,11 @@ def generate_html_report(standings, stats, chart_data):
             <canvas id="winsChart"></canvas>
         </div>
         
+        <h2>📊 Mean Winning Percentage by Rank</h2>
+        <div style="background-color: white; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); height: 400px;">
+            <canvas id="boxplotChart"></canvas>
+        </div>
+        
         <h2>🎯 League Highlights</h2>
         <div class="highlights">
             <div class="highlight-card">
@@ -802,6 +881,179 @@ def generate_html_report(standings, stats, chart_data):
             option.textContent = teamName;
             teamSelect.appendChild(option);
         }});
+        
+        // Boxplot data
+        const boxplotData = {json.dumps(boxplot_data)};
+        
+        // Create boxplot chart
+        const boxplotCtx = document.getElementById('boxplotChart').getContext('2d');
+        
+        // Prepare data for mean lines and beeswarm
+        const boxplotDatasets = [];
+        
+        boxplotData.labels.forEach((label, index) => {{
+            const data = boxplotData.data[index];
+            
+            // Vertical line for mean
+            boxplotDatasets.push({{
+                label: label + ' (Mean)',
+                data: [
+                    {{x: index - 0.4, y: data.mean}},
+                    {{x: index + 0.4, y: data.mean}}
+                ],
+                type: 'line',
+                borderColor: '#2196F3',
+                backgroundColor: '#2196F3',
+                fill: false,
+                pointRadius: 0,
+                borderWidth: 3,
+                showLine: true
+            }});
+        }});
+        
+        // Add beeswarm overlay points
+        boxplotDatasets.push({{
+            label: 'Individual Seasons',
+            data: boxplotData.beeswarm.map(point => ({{
+                x: point.x,
+                y: point.y,
+                team: point.team,
+                owner: point.owner,
+                year: point.year,
+                record: point.record,
+                rank: point.rank
+            }})),
+            type: 'scatter',
+            borderColor: 'rgba(76, 175, 80, 0.5)',
+            backgroundColor: 'rgba(76, 175, 80, 0.5)',
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            pointStyle: 'circle',
+            borderWidth: 0
+        }});
+        
+        // Custom plugin to add mean value annotations
+        const meanAnnotationPlugin = {{
+            id: 'meanAnnotations',
+            afterDraw: function(chart) {{
+                const ctx = chart.ctx;
+                const chartArea = chart.chartArea;
+                
+                boxplotData.labels.forEach((label, index) => {{
+                    const mean = boxplotData.data[index].mean;
+                    const x = chart.scales.x.getPixelForValue(index);
+                    const y = chart.scales.y.getPixelForValue(mean);
+                    
+                    // Draw text annotation
+                    ctx.save();
+                    ctx.fillStyle = '#333';
+                    ctx.font = 'bold 12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    const text = (mean * 100).toFixed(1) + '%';
+                    ctx.fillText(text, x, y - 10);
+                    ctx.restore();
+                }});
+            }}
+        }};
+        
+        const boxplotChart = new Chart(boxplotCtx, {{
+            type: 'scatter',
+            data: {{
+                datasets: boxplotDatasets
+            }},
+            plugins: [meanAnnotationPlugin],
+            options: {{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {{
+                    title: {{
+                        display: true,
+                        text: 'Mean Winning Percentage by Final Rank',
+                        font: {{
+                            size: 16,
+                            weight: 'bold'
+                        }}
+                    }},
+                    legend: {{
+                        display: false
+                    }},
+                    tooltip: {{
+                        callbacks: {{
+                            title: function(context) {{
+                                const point = context[0];
+                                // Check if this is a beeswarm point (last dataset)
+                                if (point.datasetIndex === boxplotDatasets.length - 1) {{
+                                    const dataPoint = point.raw;
+                                    return `${{dataPoint.team}} (${{dataPoint.owner}}) - ${{dataPoint.year}}`;
+                                }}
+                                return boxplotData.labels[Math.round(point.parsed.x)];
+                            }},
+                            label: function(context) {{
+                                // Check if this is a beeswarm point (last dataset)
+                                if (context.datasetIndex === boxplotDatasets.length - 1) {{
+                                    const dataPoint = context.raw;
+                                    return [
+                                        `Record: ${{dataPoint.record}}`,
+                                        `Win %: ${{(dataPoint.y * 100).toFixed(1)}}%`,
+                                        `Final Rank: ${{dataPoint.rank}}`
+                                    ];
+                                }}
+                                
+                                // This is a mean line
+                                const dataPoint = boxplotData.data[Math.round(context.parsed.x)];
+                                if (!dataPoint) return '';
+                                
+                                return `Mean: ${{(dataPoint.mean * 100).toFixed(1)}}% (${{dataPoint.count}} seasons)`;
+                            }}
+                        }}
+                    }}
+                }},
+                scales: {{
+                    x: {{
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {{
+                            display: true,
+                            text: 'Final Rank',
+                            font: {{
+                                size: 14,
+                                weight: 'bold'
+                            }}
+                        }},
+                        ticks: {{
+                            callback: function(value, index, values) {{
+                                return boxplotData.labels[value] || '';
+                            }},
+                            stepSize: 1
+                        }},
+                        grid: {{
+                            display: true,
+                            color: 'rgba(0,0,0,0.1)'
+                        }}
+                    }},
+                    y: {{
+                        title: {{
+                            display: true,
+                            text: 'Winning Percentage',
+                            font: {{
+                                size: 14,
+                                weight: 'bold'
+                            }}
+                        }},
+                        ticks: {{
+                            callback: function(value) {{
+                                return (value * 100).toFixed(0) + '%';
+                            }}
+                        }},
+                        grid: {{
+                            display: true,
+                            color: 'rgba(0,0,0,0.1)'
+                        }}
+                    }}
+                }}
+            }}
+        }});
     </script>
 </body>
 </html>"""
@@ -825,11 +1077,15 @@ def main():
         chart_data = prepare_chart_data(detailed_standings)
         print(f"Prepared chart data for {len(chart_data['datasets'])} owners")
         
+        # Prepare boxplot data
+        boxplot_data = prepare_boxplot_data(detailed_standings)
+        print(f"Prepared boxplot data for {len(boxplot_data['labels'])} ranks")
+        
         # Calculate statistics
         stats = calculate_additional_stats(standings)
         
         # Generate HTML
-        html_content = generate_html_report(standings, stats, chart_data)
+        html_content = generate_html_report(standings, stats, chart_data, boxplot_data)
         
         # Write to file
         output_path = Path(__file__).parent / '../index.html'

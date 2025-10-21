@@ -220,7 +220,7 @@
 <body>
     <div class="container">
         <h1>🏀 Fantasy Basketball League<br>Overall Standings Report</h1>
-        <div class="timestamp">Generated on October 20, 2025 at 11:42 PM</div>
+        <div class="timestamp">Generated on October 21, 2025 at 12:07 AM</div>
         
         <h2>📊 League Summary</h2>
         <div class="summary-stats">
@@ -503,6 +503,11 @@
         </div>
         <div style="background-color: white; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); height: 500px;">
             <canvas id="winsChart"></canvas>
+        </div>
+        
+        <h2>📊 Mean Winning Percentage by Rank</h2>
+        <div style="background-color: white; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); height: 400px;">
+            <canvas id="boxplotChart"></canvas>
         </div>
         
         <h2>🎯 League Highlights</h2>
@@ -791,6 +796,179 @@
             option.value = teamName;
             option.textContent = teamName;
             teamSelect.appendChild(option);
+        });
+        
+        // Boxplot data
+        const boxplotData = {"labels": ["Rank 1", "Rank 2", "Rank 3", "Rank 4", "Rank 5", "Rank 6", "Rank 7", "Rank 8", "Rank 9", "Rank 10", "Rank 11", "Rank 12"], "data": [{"mean": 0.7212638076673166, "count": 9}, {"mean": 0.7231156595191685, "count": 9}, {"mean": 0.6711582196231318, "count": 9}, {"mean": 0.6147579597141001, "count": 9}, {"mean": 0.464546783625731, "count": 9}, {"mean": 0.48732131254061073, "count": 9}, {"mean": 0.43901072124756335, "count": 9}, {"mean": 0.36092430149447696, "count": 9}, {"mean": 0.3276397011046134, "count": 9}, {"mean": 0.32915042235217673, "count": 9}, {"mean": 0.2833333333333334, "count": 3}, {"mean": 0.18333333333333335, "count": 3}], "beeswarm": [{"x": 2, "y": 0.5263157894736842, "team": "Austin CurryBrons", "owner": "Ryan", "year": 2017, "record": "10-9", "rank": 3}, {"x": 9, "y": 0.3684210526315789, "team": "Baton Rouge Beasts", "owner": "Tony", "year": 2017, "record": "7-12", "rank": 10}, {"x": 1, "y": 0.7894736842105263, "team": "Joe Biden Would Cross You Over", "owner": "John", "year": 2017, "record": "15-4", "rank": 2}, {"x": 0, "y": 0.7894736842105263, "team": "Lilongwe 327", "owner": "Ben", "year": 2017, "record": "15-4", "rank": 1}, {"x": 7, "y": 0.3157894736842105, "team": "Mwambo Rd TIBA", "owner": "Davide", "year": 2017, "record": "6-13", "rank": 8}, {"x": 5, "y": 0.47368421052631576, "team": "Team Carter", "owner": "Matt", "year": 2017, "record": "9-10", "rank": 6}, {"x": 6, "y": 0.47368421052631576, "team": "Team Nye", "owner": "Samuel", "year": 2017, "record": "9-10", "rank": 7}, {"x": 3, "y": 0.47368421052631576, "team": "The Penthouse Panda Bear", "owner": "Jeremy", "year": 2017, "record": "9-10", "rank": 4}, {"x": 4, "y": 0.42105263157894735, "team": "UTEP 2 Steps", "owner": "Jon", "year": 2017, "record": "8-11", "rank": 5}, {"x": 8, "y": 0.3684210526315789, "team": "Utah Bootleggers", "owner": "Trafton", "year": 2017, "record": "7-12", "rank": 9}, {"x": 0, "y": 0.8, "team": "Austin CurryBrons", "owner": "Ryan", "year": 2018, "record": "16-4", "rank": 1}, {"x": 7, "y": 0.3, "team": "Baton Rouge Beasts", "owner": "Tony", "year": 2018, "record": "6-14", "rank": 8}, {"x": 11, "y": 0.35, "team": "Joe Biden Would Cross You Over", "owner": "John", "year": 2018, "record": "7-13", "rank": 12}, {"x": 2, "y": 0.7, "team": "Lilongwe 327", "owner": "Ben", "year": 2018, "record": "14-6", "rank": 3}, {"x": 10, "y": 0.25, "team": "Mwambo Rd TIBA", "owner": "Davide", "year": 2018, "record": "5-15", "rank": 11}, {"x": 1, "y": 0.9, "team": "Team Carter", "owner": "Matt", "year": 2018, "record": "18-2", "rank": 2}, {"x": 9, "y": 0.4, "team": "Team Davidai", "owner": "Nadav", "year": 2018, "record": "8-12", "rank": 10}, {"x": 4, "y": 0.55, "team": "Team Reddy", "owner": "Susheel", "year": 2018, "record": "11-9", "rank": 5}, {"x": 3, "y": 0.6, "team": "Teh Mehs", "owner": "Jonathan", "year": 2018, "record": "12-8", "rank": 4}, {"x": 6, "y": 0.55, "team": "The Penthouse Panda Bear", "owner": "Jeremy", "year": 2018, "record": "11-9", "rank": 7}, {"x": 5, "y": 0.5, "team": "UTEP 2 Steps", "owner": "Jon", "year": 2018, "record": "10-10", "rank": 6}, {"x": 8, "y": 0.1, "team": "Utah Bootleggers", "owner": "Trafton", "year": 2018, "record": "2-18", "rank": 9}, {"x": 6, "y": 0.35, "team": "Ari 471", "owner": "Ben", "year": 2019, "record": "7-13", "rank": 7}, {"x": 7, "y": 0.6, "team": "Austin CurryBrons", "owner": "Ryan", "year": 2019, "record": "12-8", "rank": 8}, {"x": 10, "y": 0.3, "team": "Baton Rouge Beasts", "owner": "Tony", "year": 2019, "record": "6-14", "rank": 11}, {"x": 5, "y": 0.55, "team": "Beto Would Cross You Over", "owner": "John", "year": 2019, "record": "11-9", "rank": 6}, {"x": 9, "y": 0.5, "team": "Bull City Bangers", "owner": "Nick", "year": 2019, "record": "10-10", "rank": 10}, {"x": 1, "y": 0.8, "team": "Im Trying Jennifer", "owner": "Susheel", "year": 2019, "record": "16-4", "rank": 2}, {"x": 4, "y": 0.55, "team": "Mwambo Rd TIBA", "owner": "Davide", "year": 2019, "record": "11-9", "rank": 5}, {"x": 3, "y": 0.6, "team": "Team Carter", "owner": "Matt", "year": 2019, "record": "12-8", "rank": 4}, {"x": 8, "y": 0.3, "team": "Teh Mehs", "owner": "Jonathan", "year": 2019, "record": "6-14", "rank": 9}, {"x": 2, "y": 0.7, "team": "The Penthouse Panda Bear", "owner": "Jeremy", "year": 2019, "record": "14-6", "rank": 3}, {"x": 11, "y": 0.05, "team": "UTEP 2 Steps", "owner": "Jon", "year": 2019, "record": "1-19", "rank": 12}, {"x": 0, "y": 0.7, "team": "Utah Bootleggers", "owner": "Trafton", "year": 2019, "record": "14-6", "rank": 1}, {"x": 2, "y": 0.65, "team": "Ari 471", "owner": "Ben", "year": 2020, "record": "13-6-1", "rank": 3}, {"x": 9, "y": 0.25, "team": "Austin Football Team", "owner": "Ryan", "year": 2020, "record": "5-14-1", "rank": 10}, {"x": 4, "y": 0.45, "team": "Baton Rouge Beasts", "owner": "Tony", "year": 2020, "record": "9-10-1", "rank": 5}, {"x": 6, "y": 0.45, "team": "Bull City Bangers", "owner": "Nick", "year": 2020, "record": "9-10-1", "rank": 7}, {"x": 8, "y": 0.4, "team": "Im Trying Jennifer", "owner": "Susheel", "year": 2020, "record": "8-11-1", "rank": 9}, {"x": 0, "y": 0.9, "team": "JMapps Stepover", "owner": "John", "year": 2020, "record": "18-1-1", "rank": 1}, {"x": 10, "y": 0.3, "team": "Kawhis Laugh", "owner": "Chris", "year": 2020, "record": "6-13-1", "rank": 11}, {"x": 5, "y": 0.45, "team": "Mwambo Rd TIBA", "owner": "Davide", "year": 2020, "record": "9-10-1", "rank": 6}, {"x": 3, "y": 0.65, "team": "Team Carter", "owner": "Matt", "year": 2020, "record": "13-6-1", "rank": 4}, {"x": 1, "y": 0.7, "team": "The Penthouse Panda Bear", "owner": "Jeremy", "year": 2020, "record": "14-5-1", "rank": 2}, {"x": 7, "y": 0.35, "team": "Uncanny Logo", "owner": "Alex", "year": 2020, "record": "7-12-1", "rank": 8}, {"x": 11, "y": 0.15, "team": "Utah Bootleggers", "owner": "Trafton", "year": 2020, "record": "3-16-1", "rank": 12}, {"x": 2, "y": 0.6875, "team": "Ari 471", "owner": "Ben", "year": 2021, "record": "11-5", "rank": 3}, {"x": 0, "y": 0.625, "team": "Austin Football Team", "owner": "Ryan", "year": 2021, "record": "10-6", "rank": 1}, {"x": 4, "y": 0.3125, "team": "Baton Rouge Beasts", "owner": "Tony", "year": 2021, "record": "5-11", "rank": 5}, {"x": 6, "y": 0.5625, "team": "Im Trying Jennifer", "owner": "Susheel", "year": 2021, "record": "9-7", "rank": 7}, {"x": 9, "y": 0.1875, "team": "Kawhis Laugh", "owner": "Chris", "year": 2021, "record": "3-13", "rank": 10}, {"x": 1, "y": 0.625, "team": "Mapp Stepback", "owner": "John", "year": 2021, "record": "10-6", "rank": 2}, {"x": 7, "y": 0.1875, "team": "Nowitzkis Fadeaway", "owner": "Alex", "year": 2021, "record": "3-13", "rank": 8}, {"x": 8, "y": 0.5625, "team": "Team Carter", "owner": "Matt", "year": 2021, "record": "9-7", "rank": 9}, {"x": 5, "y": 0.5625, "team": "The Penthouse Panda Bear", "owner": "Jeremy", "year": 2021, "record": "9-7", "rank": 6}, {"x": 3, "y": 0.6875, "team": "Utah Bootleggers", "owner": "Trafton", "year": 2021, "record": "11-5", "rank": 4}, {"x": 5, "y": 0.5263157894736842, "team": "Ari 471", "owner": "Ben", "year": 2022, "record": "10-9", "rank": 6}, {"x": 1, "y": 0.5789473684210527, "team": "Austin Football Team", "owner": "Ryan", "year": 2022, "record": "11-8", "rank": 2}, {"x": 2, "y": 0.5789473684210527, "team": "Baton Rouge Beasts", "owner": "Tony", "year": 2022, "record": "11-8", "rank": 3}, {"x": 4, "y": 0.5263157894736842, "team": "Im Trying Jennifer", "owner": "Susheel", "year": 2022, "record": "10-9", "rank": 5}, {"x": 9, "y": 0.3157894736842105, "team": "Kawhis Laugh", "owner": "Chris", "year": 2022, "record": "6-13", "rank": 10}, {"x": 7, "y": 0.2631578947368421, "team": "Mapp Stepback", "owner": "John", "year": 2022, "record": "5-14", "rank": 8}, {"x": 8, "y": 0.3684210526315789, "team": "Nowitzkis Fadeaway", "owner": "Alex", "year": 2022, "record": "7-12", "rank": 9}, {"x": 3, "y": 0.5789473684210527, "team": "Team Carter", "owner": "Matt", "year": 2022, "record": "11-8", "rank": 4}, {"x": 0, "y": 0.7368421052631579, "team": "The Penthouse Panda Bear", "owner": "Jeremy", "year": 2022, "record": "14-5", "rank": 1}, {"x": 6, "y": 0.5263157894736842, "team": "Utah Bootleggers", "owner": "Trafton", "year": 2022, "record": "10-9", "rank": 7}, {"x": 5, "y": 0.3, "team": "Ari 471", "owner": "Ben", "year": 2023, "record": "6-14", "rank": 6}, {"x": 1, "y": 0.6, "team": "Austin Football Team", "owner": "Ryan", "year": 2023, "record": "12-7-1", "rank": 2}, {"x": 0, "y": 0.75, "team": "Baton Rouge Beasts", "owner": "Tony", "year": 2023, "record": "15-5", "rank": 1}, {"x": 7, "y": 0.15, "team": "Bull City Bums", "owner": "Nick", "year": 2023, "record": "3-16-1", "rank": 8}, {"x": 3, "y": 0.7, "team": "Im Trying Jennifer", "owner": "Susheel", "year": 2023, "record": "14-6", "rank": 4}, {"x": 4, "y": 0.45, "team": "Miami Mambas", "owner": "John", "year": 2023, "record": "9-11", "rank": 5}, {"x": 2, "y": 0.8, "team": "Nowitzkis Fadeaway", "owner": "Alex", "year": 2023, "record": "16-4", "rank": 3}, {"x": 8, "y": 0.25, "team": "Team Carter", "owner": "Matt", "year": 2023, "record": "5-15", "rank": 9}, {"x": 6, "y": 0.6, "team": "The Penthouse Panda Bear", "owner": "Jeremy", "year": 2023, "record": "12-8", "rank": 7}, {"x": 9, "y": 0.35, "team": "Utah Bootleggers", "owner": "Trafton", "year": 2023, "record": "7-13", "rank": 10}, {"x": 1, "y": 0.7777777777777778, "team": "Austin Football Team", "owner": "Ryan", "year": 2024, "record": "14-4", "rank": 2}, {"x": 2, "y": 0.5555555555555556, "team": "Baton Rouge Beasts", "owner": "Tony", "year": 2024, "record": "10-8", "rank": 3}, {"x": 3, "y": 0.6111111111111112, "team": "Bull City Bums", "owner": "Nick", "year": 2024, "record": "11-7", "rank": 4}, {"x": 5, "y": 0.4444444444444444, "team": "Fly Nye Guy", "owner": "Samuel", "year": 2024, "record": "8-10", "rank": 6}, {"x": 6, "y": 0.3333333333333333, "team": "Im Trying Jennifer", "owner": "Susheel", "year": 2024, "record": "6-12", "rank": 7}, {"x": 9, "y": 0.2222222222222222, "team": "Miami Mambas", "owner": "John", "year": 2024, "record": "4-14", "rank": 10}, {"x": 8, "y": 0.3888888888888889, "team": "Nowitzkis Fadeaway", "owner": "Alex", "year": 2024, "record": "7-11", "rank": 9}, {"x": 7, "y": 0.5555555555555556, "team": "The Penthouse Panda Bear", "owner": "Jeremy", "year": 2024, "record": "10-8", "rank": 8}, {"x": 0, "y": 0.6111111111111112, "team": "Toso Viti Toso", "owner": "Ben", "year": 2024, "record": "11-7", "rank": 1}, {"x": 4, "y": 0.5, "team": "Utah Bootleggers", "owner": "Trafton", "year": 2024, "record": "9-9", "rank": 5}, {"x": 2, "y": 0.8421052631578947, "team": "Austin Football Team", "owner": "Ryan", "year": 2025, "record": "16-3", "rank": 3}, {"x": 9, "y": 0.3684210526315789, "team": "Baton Rouge Beasts", "owner": "Tony", "year": 2025, "record": "7-12", "rank": 10}, {"x": 8, "y": 0.21052631578947367, "team": "Bull City Bums", "owner": "Nick", "year": 2025, "record": "4-15", "rank": 9}, {"x": 5, "y": 0.5789473684210527, "team": "Fly Nye Guy", "owner": "Samuel", "year": 2025, "record": "11-8", "rank": 6}, {"x": 4, "y": 0.42105263157894735, "team": "Im Trying Jennifer", "owner": "Susheel", "year": 2025, "record": "8-11", "rank": 5}, {"x": 6, "y": 0.10526315789473684, "team": "Miami Mambas", "owner": "John", "year": 2025, "record": "2-17", "rank": 7}, {"x": 7, "y": 0.5263157894736842, "team": "Nowitzkis Fadeaway", "owner": "Alex", "year": 2025, "record": "10-9", "rank": 8}, {"x": 1, "y": 0.7368421052631579, "team": "The Penthouse Panda Bear", "owner": "Jeremy", "year": 2025, "record": "14-5", "rank": 2}, {"x": 3, "y": 0.631578947368421, "team": "Toso Viti Toso", "owner": "Ben", "year": 2025, "record": "12-7", "rank": 4}, {"x": 0, "y": 0.5789473684210527, "team": "Utah Bootleggers", "owner": "Trafton", "year": 2025, "record": "11-8", "rank": 1}]};
+        
+        // Create boxplot chart
+        const boxplotCtx = document.getElementById('boxplotChart').getContext('2d');
+        
+        // Prepare data for mean lines and beeswarm
+        const boxplotDatasets = [];
+        
+        boxplotData.labels.forEach((label, index) => {
+            const data = boxplotData.data[index];
+            
+            // Vertical line for mean
+            boxplotDatasets.push({
+                label: label + ' (Mean)',
+                data: [
+                    {x: index - 0.4, y: data.mean},
+                    {x: index + 0.4, y: data.mean}
+                ],
+                type: 'line',
+                borderColor: '#2196F3',
+                backgroundColor: '#2196F3',
+                fill: false,
+                pointRadius: 0,
+                borderWidth: 3,
+                showLine: true
+            });
+        });
+        
+        // Add beeswarm overlay points
+        boxplotDatasets.push({
+            label: 'Individual Seasons',
+            data: boxplotData.beeswarm.map(point => ({
+                x: point.x,
+                y: point.y,
+                team: point.team,
+                owner: point.owner,
+                year: point.year,
+                record: point.record,
+                rank: point.rank
+            })),
+            type: 'scatter',
+            borderColor: 'rgba(76, 175, 80, 0.5)',
+            backgroundColor: 'rgba(76, 175, 80, 0.5)',
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            pointStyle: 'circle',
+            borderWidth: 0
+        });
+        
+        // Custom plugin to add mean value annotations
+        const meanAnnotationPlugin = {
+            id: 'meanAnnotations',
+            afterDraw: function(chart) {
+                const ctx = chart.ctx;
+                const chartArea = chart.chartArea;
+                
+                boxplotData.labels.forEach((label, index) => {
+                    const mean = boxplotData.data[index].mean;
+                    const x = chart.scales.x.getPixelForValue(index);
+                    const y = chart.scales.y.getPixelForValue(mean);
+                    
+                    // Draw text annotation
+                    ctx.save();
+                    ctx.fillStyle = '#333';
+                    ctx.font = 'bold 12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    const text = (mean * 100).toFixed(1) + '%';
+                    ctx.fillText(text, x, y - 10);
+                    ctx.restore();
+                });
+            }
+        };
+        
+        const boxplotChart = new Chart(boxplotCtx, {
+            type: 'scatter',
+            data: {
+                datasets: boxplotDatasets
+            },
+            plugins: [meanAnnotationPlugin],
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Mean Winning Percentage by Final Rank',
+                        font: {
+                            size: 16,
+                            weight: 'bold'
+                        }
+                    },
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function(context) {
+                                const point = context[0];
+                                // Check if this is a beeswarm point (last dataset)
+                                if (point.datasetIndex === boxplotDatasets.length - 1) {
+                                    const dataPoint = point.raw;
+                                    return `${dataPoint.team} (${dataPoint.owner}) - ${dataPoint.year}`;
+                                }
+                                return boxplotData.labels[Math.round(point.parsed.x)];
+                            },
+                            label: function(context) {
+                                // Check if this is a beeswarm point (last dataset)
+                                if (context.datasetIndex === boxplotDatasets.length - 1) {
+                                    const dataPoint = context.raw;
+                                    return [
+                                        `Record: ${dataPoint.record}`,
+                                        `Win %: ${(dataPoint.y * 100).toFixed(1)}%`,
+                                        `Final Rank: ${dataPoint.rank}`
+                                    ];
+                                }
+                                
+                                // This is a mean line
+                                const dataPoint = boxplotData.data[Math.round(context.parsed.x)];
+                                if (!dataPoint) return '';
+                                
+                                return `Mean: ${(dataPoint.mean * 100).toFixed(1)}% (${dataPoint.count} seasons)`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Final Rank',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            callback: function(value, index, values) {
+                                return boxplotData.labels[value] || '';
+                            },
+                            stepSize: 1
+                        },
+                        grid: {
+                            display: true,
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Winning Percentage',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return (value * 100).toFixed(0) + '%';
+                            }
+                        },
+                        grid: {
+                            display: true,
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    }
+                }
+            }
         });
     </script>
 </body>
