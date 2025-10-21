@@ -220,7 +220,7 @@
 <body>
     <div class="container">
         <h1>🏀 Fantasy Basketball League<br>Overall Standings Report</h1>
-        <div class="timestamp">Generated on October 21, 2025 at 12:30 AM</div>
+        <div class="timestamp">Generated on October 21, 2025 at 12:36 AM</div>
         <div style="text-align: center; margin: 10px 0;">
             <a href="https://github.com/jwildfire/grudgematch" target="_blank" style="color: #2196F3; text-decoration: none; font-size: 14px;">
                 📱 View Source Code on GitHub
@@ -1014,65 +1014,6 @@
         });
         
         // Playoff Probability Calculator
-        function interpolatePlayoffProbability(winPct) {
-            // Convert to decimal
-            const targetPct = winPct / 100;
-            
-            // Find the closest data points
-            let lower = null;
-            let upper = null;
-            
-            for (let i = 0; i < playoffProbabilities.length; i++) {
-                const data = playoffProbabilities[i];
-                if (data.win_pct <= targetPct) {
-                    lower = data;
-                } else if (data.win_pct > targetPct && upper === null) {
-                    upper = data;
-                    break;
-                }
-            }
-            
-            // If we have exact match
-            if (lower && lower.win_pct === targetPct) {
-                return {
-                    probability: lower.probability,
-                    sample_size: lower.sample_size
-                };
-            }
-            
-            // If we only have lower bound
-            if (lower && !upper) {
-                return {
-                    probability: lower.probability,
-                    sample_size: lower.sample_size
-                };
-            }
-            
-            // If we only have upper bound
-            if (!lower && upper) {
-                return {
-                    probability: upper.probability,
-                    sample_size: upper.sample_size
-                };
-            }
-            
-            // Interpolate between bounds
-            if (lower && upper) {
-                const ratio = (targetPct - lower.win_pct) / (upper.win_pct - lower.win_pct);
-                const interpolatedProb = lower.probability + ratio * (upper.probability - lower.probability);
-                return {
-                    probability: interpolatedProb,
-                    sample_size: Math.round((lower.sample_size + upper.sample_size) / 2)
-                };
-            }
-            
-            // Default fallback
-            return {
-                probability: 0,
-                sample_size: 0
-            };
-        }
-        
         function updatePlayoffProbability() {
             const slider = document.getElementById('winPctSlider');
             const winPct = parseFloat(slider.value);
@@ -1080,8 +1021,42 @@
             // Update display
             document.getElementById('winPctDisplay').textContent = winPct.toFixed(1) + '%';
             
-            // Calculate probability
-            const result = interpolatePlayoffProbability(winPct);
+            // Find the cumulative playoff percentage for win% >= slider value
+            const threshold = winPct / 100.0;
+            
+            // Find the closest threshold in cumulative data
+            let result = { probability: 0, sample_size: 0 };
+            
+            for (let i = 0; i < cumulativePlayoffData.length; i++) {
+                const data = cumulativePlayoffData[i];
+                if (Math.abs(data.threshold - threshold) < 0.005) { // Within 0.5%
+                    result = {
+                        probability: data.playoff_percentage,
+                        sample_size: data.total_teams
+                    };
+                    break;
+                }
+            }
+            
+            // If no exact match, find the closest one
+            if (result.sample_size === 0) {
+                let closestData = cumulativePlayoffData[0];
+                let minDiff = Math.abs(cumulativePlayoffData[0].threshold - threshold);
+                
+                for (let i = 1; i < cumulativePlayoffData.length; i++) {
+                    const diff = Math.abs(cumulativePlayoffData[i].threshold - threshold);
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        closestData = cumulativePlayoffData[i];
+                    }
+                }
+                
+                result = {
+                    probability: closestData.playoff_percentage,
+                    sample_size: closestData.total_teams
+                };
+            }
+            
             const probability = (result.probability * 100).toFixed(1);
             
             // Update probability display
@@ -1099,13 +1074,17 @@
                 probElement.style.color = '#F44336'; // Red
             }
             
-            // Update sample size
+            // Update sample size and message
             if (result.sample_size > 0) {
                 document.getElementById('sampleSize').textContent = 
-                    `Based on ${result.sample_size} historical season${result.sample_size === 1 ? '' : 's'}`;
+                    `Based on ${result.sample_size} team${result.sample_size === 1 ? '' : 's'} with ≥${winPct.toFixed(1)}% win rate`;
             } else {
-                document.getElementById('sampleSize').textContent = 'Insufficient historical data';
+                document.getElementById('sampleSize').textContent = 'No historical data available';
             }
+            
+            // Update message to clarify it's for >= win%
+            document.getElementById('playoffMessage').textContent = 
+                `Chance of playoffs with ≥${winPct.toFixed(1)}% win rate`;
         }
         
         // Initialize slider
